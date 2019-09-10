@@ -1,0 +1,23 @@
+language: generic
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t lucaspenido/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run -e CI=true lucaspenido/react-test npm test
+
+after_success:
+  - docker build -t lucaspenido/multi-client ./client
+  - docker build -t lucaspenido/multi-nginx ./nginx
+  - docker build -t lucaspenido/multi-server ./server
+  - docker build -t lucaspenido/multi-worker ./worker
+  # Login Docker-CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Push images to docker hub.
+  - docker push lucaspenido/multi-client
+  - docker push lucaspenido/multi-nginx
+  - docker push lucaspenido/multi-server
+  - docker push lucaspenido/multi-worker
