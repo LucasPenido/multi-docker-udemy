@@ -21,3 +21,17 @@ after_success:
   - docker push lucaspenido/multi-nginx
   - docker push lucaspenido/multi-server
   - docker push lucaspenido/multi-worker
+
+deploy:
+  provider: elasticbeanstalk
+  region: sa-east-1
+  app: multi-docker-udemy
+  env: MultiDockerUdemy-env
+  bucket_name: elasticbeanstalk-sa-east-1-486748495912
+  bucket_path: docker-multi
+  on:
+    branch: master
+  access_key_id:
+    secure: $AWS_ACCESS_KEY
+  secret_access_key:
+    secure: $AWS_SECRET_KEY
